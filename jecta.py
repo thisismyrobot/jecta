@@ -11,26 +11,49 @@ class appwindow(object):
         self.window = gtk.Window()
 
 
-class labeler(appwindow):
-    pass
+class tagger(appwindow):
+
+    def __init__(self, text):
+        super(tagger, self).__init__()
+        w = self.window
+        self.window.set_size_request(300, 50)
+        self.window.set_title("Enter tag")
+        self.window.set_position(gtk.WIN_POS_CENTER)
+        self.window.set_decorated(False)
+
+        tag_label = gtk.Label()
+        tag_label.set_text("Enter tag")
+        tag_entry = gtk.Entry()
+        tag_entry.connect("activate", self.enter_pressed, tag_entry)
+
+        vbox = gtk.VBox(False, 0)
+        vbox.add(tag_label)
+        vbox.add(tag_entry)
+
+        self.window.add(vbox)
+        self.window.show_all()
+
+    def enter_pressed(self, widget, entry):
+
+        #handle the tag here
+        print entry.get_text()
+
+        self.window.destroy()
 
 
-class dropwidget(appwindow):
+class dropper(appwindow):
 
     def __init__(self):
-        super(dropwidget, self).__init__()
-        w = self.window
-        w.set_size_request(150, 150)
-        w.drag_dest_set(0, [], 0)
-        w.set_opacity(0.75)
-        w.set_keep_above(True)
-        w.set_decorated(False)
-        #w.set_has_frame(True)
-        w.connect('drag_motion', self.motion_cb)
-        w.connect('drag_drop', self.drop_cb)
-        w.connect('drag_data_received', self.got_data_cb)
-        w.connect('destroy', lambda w: gtk.main_quit())
-        w.show_all()
+        super(dropper, self).__init__()
+        self.window.set_size_request(150, 150)
+        self.window.drag_dest_set(0, [], 0)
+        self.window.set_opacity(0.75)
+        self.window.set_keep_above(True)
+        self.window.set_decorated(False)
+        self.window.connect('drag_motion', self.motion_cb)
+        self.window.connect('drag_drop', self.drop_cb)
+        self.window.connect('drag_data_received', self.got_data_cb)
+        self.window.show_all()
         gtk.main()
     def motion_cb(self, wid, context, x, y, time):
         #self.l.set_text('\n'.join([str(t) for t in context.targets]))
@@ -46,9 +69,12 @@ class dropwidget(appwindow):
         text = data.get_text() #gnome files
         if text is None: # fall-back on windows
             text = data.data[0:-3]
-        diag = gtk.MessageDialog(message_format=text)
-        diag.show()
+
+        #launch labeler
+        tagger(text)
+
         context.finish(True, False, time)
 
 
-dropwidget()
+dropper()
+
