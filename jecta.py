@@ -26,6 +26,11 @@ class Jecta(object):
                            gobject.SIGNAL_RUN_FIRST,
                            gobject.TYPE_NONE, 
                            ())
+        gobject.signal_new("jecta_add_to_db", 
+                           signals.Sender, 
+                           gobject.SIGNAL_RUN_FIRST,
+                           gobject.TYPE_NONE, 
+                           (gobject.TYPE_STRING,))
 
         #connect signals to handler
         sender = signals.Sender()

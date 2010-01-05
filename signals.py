@@ -21,6 +21,7 @@ class Handler(gobject.GObject):
         sender.connect('jecta_data_received', self.data_received)
         sender.connect('jecta_tag_received', self.tag_received)
         sender.connect('jecta_load_db', self.load_db)
+        sender.connect('jecta_add_to_db', self.add_to_db)
 
     def data_received(self, sender, data):
         self.data = data
@@ -28,10 +29,11 @@ class Handler(gobject.GObject):
         tagger.show()
 
     def tag_received(self, sender, tag):
+        sender.emit('jecta_add_to_db', tag)
 
+    def add_to_db(self, sender, tag):
         self.db[tag] = self.data
         print self.db
-
         db_file = open("database.pickle", 'w')
         pickle.dump(self.db, db_file, -1)
         db_file.close()
