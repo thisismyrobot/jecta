@@ -1,7 +1,8 @@
 import gtk
+import pickle
 
 
-class widget(object):
+class Widget(object):
     """ This is a window(widget) in the application - basic application-wide 
         settings are set here.
     """
@@ -11,15 +12,18 @@ class widget(object):
         self.window = gtk.Window()
         self.window.set_decorated(False)
 
-class tagger(widget):
+class Tagger(Widget):
 
     tag_prompt = 'Type in a tag'
+    text = ''
 
-    def __init__(self, text):
-        super(tagger, self).__init__()
+    def __init__(self, text, db):
+        super(Tagger, self).__init__()
         self.window.set_size_request(300, 30)
         self.window.set_title(self.tag_prompt)
         self.window.set_position(gtk.WIN_POS_CENTER)
+        self.text = text
+        self.db = db
 
         tag_entry = gtk.Entry()
         tag_entry.set_text(self.tag_prompt)
@@ -31,17 +35,22 @@ class tagger(widget):
     def parse_tag(self, widget, entry):
 
         #handle the tag here
-        entry_text = entry.get_text()
-        if entry_text != self.tag_prompt and entry_text != '':
-            print entry.get_text()
+        tag = entry.get_text()
+        if tag != self.tag_prompt and tag != '':
+            self.db[tag] = self.text
+            print self.db
+
+            db_file = open("database.pickle", 'w')
+            pickle.dump(self.db, db_file, -1)
+            db_file.close()
 
         self.window.destroy()
 
 
-class dropper(widget):
+class Dropper(Widget):
 
-    def __init__(self):
-        super(dropper, self).__init__()
+    def __init__(self, db):
+        super(Dropper, self).__init__()
         self.window.set_size_request(150, 150)
         self.window.drag_dest_set(0, [], 0)
         self.window.set_opacity(0.75)
@@ -50,6 +59,7 @@ class dropper(widget):
         self.window.connect('drag_drop', self.drop_cb)
         self.window.connect('drag_data_received', self.got_data_cb)
         self.window.show_all()
+        self.db = db
 
     def motion_cb(self, wid, context, x, y, time):
         #self.l.set_text('\n'.join([str(t) for t in context.targets]))
@@ -67,7 +77,7 @@ class dropper(widget):
             text = data.data[0:-3]
 
         #launch labeler
-        tagger(text)
+        Tagger(text, self.db)
 
         context.finish(True, False, time)
 
