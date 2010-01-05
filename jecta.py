@@ -16,21 +16,15 @@ class tagger(appwindow):
     def __init__(self, text):
         super(tagger, self).__init__()
         w = self.window
-        self.window.set_size_request(300, 50)
+        self.window.set_size_request(300, 30)
         self.window.set_title("Enter tag")
         self.window.set_position(gtk.WIN_POS_CENTER)
         self.window.set_decorated(False)
 
-        tag_label = gtk.Label()
-        tag_label.set_text("Enter tag")
         tag_entry = gtk.Entry()
         tag_entry.connect("activate", self.enter_pressed, tag_entry)
 
-        vbox = gtk.VBox(False, 0)
-        vbox.add(tag_label)
-        vbox.add(tag_entry)
-
-        self.window.add(vbox)
+        self.window.add(tag_entry)
         self.window.show_all()
 
     def enter_pressed(self, widget, entry):
