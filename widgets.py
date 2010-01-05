@@ -10,7 +10,8 @@ class Widget(object):
 
     def __init__(self):
         self.window = gtk.Window()
-        self.window.set_decorated(False)
+        #self.window.set_decorated(False)
+
 
 class Tagger(Widget):
 
@@ -25,11 +26,11 @@ class Tagger(Widget):
         self.text = text
         self.db = db
 
-        tag_entry = gtk.Entry()
-        tag_entry.set_text(self.tag_prompt)
-        tag_entry.connect("activate", self.parse_tag, tag_entry)
+        self.tag_entry = gtk.Entry()
+        self.tag_entry.set_text(self.tag_prompt)
+        self.tag_entry.connect("activate", self.parse_tag, self.tag_entry)
 
-        self.window.add(tag_entry)
+        self.window.add(self.tag_entry)
         self.window.show_all()
 
     def parse_tag(self, widget, entry):
