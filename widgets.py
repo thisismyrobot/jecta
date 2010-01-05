@@ -24,41 +24,53 @@ class Tagger(Widget):
     tag_prompt = 'Type in a tag'
     text = ''
 
-    def __init__(self):
+    def __init__(self, sender):
         super(Tagger, self).__init__()
+
         self.window.set_size_request(300, 30)
         self.window.set_title(self.tag_prompt)
         self.window.set_position(gtk.WIN_POS_CENTER)
 
-        self.tag_entry = gtk.Entry()
-        self.tag_entry.set_text(self.tag_prompt)
-        self.tag_entry.connect("activate", self.parse_tag, self.tag_entry)
+        tag_entry = gtk.Entry()
+        tag_entry.set_text(self.tag_prompt)
+        tag_entry.connect("activate", self.tag_submitted, sender)
 
-        self.window.add(self.tag_entry)
+        self.window.add(tag_entry)
 
-    def parse_tag(self, widget, entry):
-
-        #handle the tag here
+    def tag_submitted(self, entry, sender):
         tag = entry.get_text()
-
-        print tag
-
-#        if tag != self.tag_prompt and tag != '':
-#            self.db[tag] = self.text
-#            print self.db
-
-#            db_file = open("database.pickle", 'w')
-#            pickle.dump(self.db, db_file, -1)
-#            db_file.close()
-
+        if tag != '' and tag is not None:
+            sender.emit("jecta_tag_received", tag)
         self.window.destroy()
-
 
 class Dropper(Widget):
 
-    def __init__(self):
+    def __init__(self, sender):
         super(Dropper, self).__init__()
         self.window.set_size_request(150, 150)
         self.window.drag_dest_set(0, [], 0)
         self.window.set_opacity(0.75)
         self.window.set_keep_above(True)
+        self.window.connect('drag_motion', self.motion_cb)
+        self.window.connect('drag_drop', self.drop_cb)
+        self.window.connect('drag_data_received', self.got_data_cb, sender)
+
+    def motion_cb(self, wid, context, x, y, time):
+        context.drag_status(gtk.gdk.ACTION_COPY, time)
+        return True
+
+    def drop_cb(self, wid, context, x, y, time):
+        wid.drag_get_data(context, context.targets[-1], time)
+        return True
+
+    def got_data_cb(self, wid, context, x, y, data, info, time, sender):
+        text = data.get_text() #gnome files
+
+        #fall-back on windows
+        if text is None:
+            text = data.data
+
+        if text != '' and text is not None:
+            sender.emit("jecta_data_received", text)
+
+        context.finish(True, False, time)

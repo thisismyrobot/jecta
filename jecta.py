@@ -1,5 +1,4 @@
 import gtk
-import handlers
 import pickle
 import signals
 import widgets
@@ -20,13 +19,14 @@ class Jecta(object):
         except:
             pass
 
-        #create windows
-        drop_target = widgets.Dropper()
-        tagger = widgets.Tagger()
-
         #create signals
         gobject.type_register(signals.Sender)
-        gobject.signal_new("taggable_data_recieved", 
+        gobject.signal_new("jecta_data_received", 
+                           signals.Sender, 
+                           gobject.SIGNAL_RUN_FIRST,
+                           gobject.TYPE_NONE, 
+                           (gobject.TYPE_STRING,))
+        gobject.signal_new("jecta_tag_received", 
                            signals.Sender, 
                            gobject.SIGNAL_RUN_FIRST,
                            gobject.TYPE_NONE, 
@@ -36,13 +36,9 @@ class Jecta(object):
         sender = signals.Sender()
         signals.Handler(sender)
 
-        #create action handlers
-        drop_handler = handlers.Drop()
-
-        #connect signals up
-        drop_target.window.connect('drag_motion', drop_handler.motion_cb)
-        drop_target.window.connect('drag_drop', drop_handler.drop_cb)
-        drop_target.window.connect('drag_data_received', drop_handler.got_data_cb, sender)
+        #create windows, provide signal sender in case needed
+        drop_target = widgets.Dropper(sender)
+        tagger = widgets.Tagger(sender)
 
         #show drop target
         drop_target.show()
