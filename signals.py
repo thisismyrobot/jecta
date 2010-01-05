@@ -1,7 +1,7 @@
 import gtk
 import gobject
-import pickle
 import widgets
+import database
 
 
 class Sender(gobject.GObject):
@@ -29,20 +29,10 @@ class Handler(gobject.GObject):
         tagger.show()
 
     def tag_received(self, sender, tag):
-        sender.emit('jecta_add_to_db', tag)
+        sender.emit('jecta_add_to_db', tag, self.data)
 
-    def add_to_db(self, sender, tag):
-        self.db[tag] = self.data
-        print self.db
-        db_file = open("database.pickle", 'w')
-        pickle.dump(self.db, db_file, -1)
-        db_file.close()
+    def add_to_db(self, sender, tag, data):
+        self.db.add(tag, data)
 
     def load_db(self, sender):
-        try:
-            db_file = open("database.pickle", 'r')
-            self.db = pickle.load(db_file)
-            db_file.close()
-        except:
-            self.db = {}
-
+        self.db = database.Database()

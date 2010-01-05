@@ -1,5 +1,4 @@
 import gtk
-import pickle
 
 
 class Widget(object):
@@ -14,9 +13,6 @@ class Widget(object):
 
     def show(self):
         self.window.show_all()
-
-    def hide(self):
-        self.window.hide()
 
 
 class Tagger(Widget):

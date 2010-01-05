@@ -30,7 +30,7 @@ class Jecta(object):
                            signals.Sender, 
                            gobject.SIGNAL_RUN_FIRST,
                            gobject.TYPE_NONE, 
-                           (gobject.TYPE_STRING,))
+                           (gobject.TYPE_STRING, gobject.TYPE_STRING))
 
         #connect signals to handler
         sender = signals.Sender()
