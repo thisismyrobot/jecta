@@ -43,6 +43,7 @@ class Tagger(Widget):
             sender.emit("jecta_tag_received", tag)
         self.window.destroy()
 
+
 class Dropper(Widget):
 
     def __init__(self, sender):
