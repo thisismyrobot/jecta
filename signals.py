@@ -25,20 +25,20 @@ class DropHandler(object):
             text = data.data
 
         if text != '':
-            sender.emit("taggable_data_recieved")
+            sender.emit("taggable_data_recieved", text)
 
         context.finish(True, False, time)
 
 
 class DataReceived(gobject.GObject):
-    """ This reciever triggers the taging window for the data.
+    """ This reciever triggers the tagging window for the data.
     """
     def __init__(self, sender):
         self.__gobject_init__()
-        sender.connect('taggable_data_recieved', self.report_signal)
+        sender.connect('taggable_data_recieved', self.taggable_data_received)
 
-    def report_signal(self, sender):
-        print "got data recieved signal"
+    def taggable_data_received(self, sender, data):
+        print "got taggable data: %s" % data
 
 
 class TagHandler(object):

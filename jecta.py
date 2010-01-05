@@ -26,7 +26,7 @@ class Jecta(object):
         #create signals
         gobject.type_register(signals.Sender)
         gobject.signal_new("taggable_data_recieved", signals.Sender, gobject.SIGNAL_RUN_FIRST,
-                           gobject.TYPE_NONE, ())
+                           gobject.TYPE_NONE, (gobject.TYPE_STRING,))
         sender = signals.Sender()
         data_reciever = signals.DataReceived(sender)
 
