@@ -13,7 +13,6 @@ class Database(object):
             self.mapping[tag].append(data)
         else:
             self.mapping[tag] = [data]
-        print self.mapping
         db_file = open("database.pickle", 'w')
         pickle.dump(self.mapping, db_file, -1)
         db_file.close()

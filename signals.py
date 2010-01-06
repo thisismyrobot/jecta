@@ -11,11 +11,9 @@ class Sender(gobject.GObject):
 
 class Handler(gobject.GObject):
     """ This handles all custom application signals, acting as the "controller"
-        for this application.
+        for this application. It stores a instance of the database and the data
+        for the last tag.
     """
-    db = None
-    data = None
-
     def __init__(self, sender):
         self.__gobject_init__()
         sender.connect('jecta_data_received', self.data_received)
@@ -30,6 +28,7 @@ class Handler(gobject.GObject):
 
     def tag_received(self, sender, tag):
         sender.emit('jecta_add_to_db', tag, self.data)
+        self.data = None
 
     def add_to_db(self, sender, tag, data):
         self.db.add(tag, data)
