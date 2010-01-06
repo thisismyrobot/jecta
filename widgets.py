@@ -25,7 +25,6 @@ class Widget(object):
 class Tagger(Widget):
 
     tag_prompt = 'Type in a tag'
-    text = ''
 
     def create_window(self):
         self.window.set_size_request(300, 30)
@@ -43,6 +42,25 @@ class Tagger(Widget):
         self.window.destroy()
 
 
+class Searcher(Widget):
+
+    search_prompt = 'Find by tag'
+
+    def create_window(self):
+        self.window.set_size_request(300, 30)
+        self.window.set_title(self.search_prompt)
+        self.window.set_position(gtk.WIN_POS_CENTER)
+        search_entry = gtk.Entry()
+        search_entry.set_text(self.search_prompt)
+        search_entry.connect("changed", self.search)
+        self.window.add(search_entry)
+
+    def search(self, entry):
+        search_string = entry.get_text()
+        if search_string != self.search_prompt and search_string != '' and search_string is not None:
+            self.sender.emit("jecta_search_string_received", search_string, entry)
+
+
 class Dropper(Widget):
 
     def create_window(self):
@@ -53,7 +71,9 @@ class Dropper(Widget):
         self.window.connect('drag_motion', self.motion_cb)
         self.window.connect('drag_drop', self.drop_cb)
         self.window.connect('drag_data_received', self.got_data_cb)
-        self.window.connect("delete-event", gtk.main_quit)
+        self.window.connect('delete-event', gtk.main_quit)
+        self.window.connect('button-press-event', self.clicked)
+        self.window.set_events(gtk.gdk.BUTTON_PRESS_MASK)
 
     def motion_cb(self, wid, context, x, y, time):
         context.drag_status(gtk.gdk.ACTION_COPY, time)
@@ -74,3 +94,7 @@ class Dropper(Widget):
             self.sender.emit("jecta_data_received", text)
 
         context.finish(True, False, time)
+
+    def clicked(self, window, event):
+        if event.button == 1:
+            self.sender.emit("jecta_search_request_received")

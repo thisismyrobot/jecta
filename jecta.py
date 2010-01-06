@@ -31,6 +31,16 @@ class Jecta(object):
                            gobject.SIGNAL_RUN_FIRST,
                            gobject.TYPE_NONE, 
                            (gobject.TYPE_STRING, gobject.TYPE_STRING))
+        gobject.signal_new("jecta_search_request_received", 
+                           signals.Sender, 
+                           gobject.SIGNAL_RUN_FIRST,
+                           gobject.TYPE_NONE, 
+                           ())
+        gobject.signal_new("jecta_search_string_received", 
+                           signals.Sender, 
+                           gobject.SIGNAL_RUN_FIRST,
+                           gobject.TYPE_NONE, 
+                           (gobject.TYPE_STRING, gtk.Entry))
 
         #connect signals to handler
         sender = signals.Sender()
