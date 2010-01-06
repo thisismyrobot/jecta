@@ -11,35 +11,35 @@ class Jecta(object):
 
         #create signals
         gobject.type_register(signals.Sender)
-        gobject.signal_new("jecta_data_received", 
-                           signals.Sender, 
+        gobject.signal_new("jecta_data_received",
+                           signals.Sender,
                            gobject.SIGNAL_RUN_FIRST,
-                           gobject.TYPE_NONE, 
+                           gobject.TYPE_NONE,
                            (gobject.TYPE_STRING,))
-        gobject.signal_new("jecta_tag_received", 
-                           signals.Sender, 
+        gobject.signal_new("jecta_tag_received",
+                           signals.Sender,
                            gobject.SIGNAL_RUN_FIRST,
-                           gobject.TYPE_NONE, 
+                           gobject.TYPE_NONE,
                            (gobject.TYPE_STRING,))
-        gobject.signal_new("jecta_load_db", 
-                           signals.Sender, 
+        gobject.signal_new("jecta_load_db",
+                           signals.Sender,
                            gobject.SIGNAL_RUN_FIRST,
-                           gobject.TYPE_NONE, 
+                           gobject.TYPE_NONE,
                            ())
-        gobject.signal_new("jecta_add_to_db", 
-                           signals.Sender, 
+        gobject.signal_new("jecta_add_to_db",
+                           signals.Sender,
                            gobject.SIGNAL_RUN_FIRST,
-                           gobject.TYPE_NONE, 
+                           gobject.TYPE_NONE,
                            (gobject.TYPE_STRING, gobject.TYPE_STRING))
-        gobject.signal_new("jecta_search_request_received", 
-                           signals.Sender, 
+        gobject.signal_new("jecta_search_request_received",
+                           signals.Sender,
                            gobject.SIGNAL_RUN_FIRST,
-                           gobject.TYPE_NONE, 
+                           gobject.TYPE_NONE,
                            ())
-        gobject.signal_new("jecta_search_string_received", 
-                           signals.Sender, 
+        gobject.signal_new("jecta_search_string_received",
+                           signals.Sender,
                            gobject.SIGNAL_RUN_FIRST,
-                           gobject.TYPE_NONE, 
+                           gobject.TYPE_NONE,
                            (gobject.TYPE_STRING, gtk.Entry))
 
         #connect signals to handler

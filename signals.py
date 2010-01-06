@@ -43,7 +43,4 @@ class Handler(gobject.GObject):
         searcher.show()
 
     def search_string_recieved(self, sender, search_string, entry):
-        print sender
-        print search_string
-        print entry
-
+        print self.db.search(search_string)

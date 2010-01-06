@@ -24,3 +24,10 @@ class Database(object):
             db_file.close()
         except:
             self.mapping = {}
+
+    def search(self, query):
+        results = []
+        for tag,data in self.mapping.items():
+            if tag.startswith(query):
+                results.extend(data)
+        return results
