@@ -10,6 +10,7 @@ class Widget(object):
         self.window.connect("destroy", self.close)
         self.sender = sender
         self.create_window()
+        self.window.set_keep_above(True)
 
     def show(self):
         self.window.show_all()
@@ -67,7 +68,6 @@ class Dropper(Widget):
         self.window.set_size_request(150, 150)
         self.window.drag_dest_set(0, [], 0)
         self.window.set_opacity(0.75)
-        self.window.set_keep_above(True)
         self.window.connect('drag_motion', self.motion_cb)
         self.window.connect('drag_drop', self.drop_cb)
         self.window.connect('drag_data_received', self.got_data_cb)

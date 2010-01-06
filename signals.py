@@ -22,6 +22,7 @@ class Handler(gobject.GObject):
         sender.connect('jecta_add_to_db', self.add_to_db)
         sender.connect('jecta_search_request_received', self.search_request_received)
         sender.connect('jecta_search_string_received', self.search_string_recieved)
+        sender.connect('jecta_search_results_generated', self.search_results_generated)
 
     def data_received(self, sender, data):
         self.data = data
@@ -39,8 +40,13 @@ class Handler(gobject.GObject):
         self.db = database.Database()
 
     def search_request_received(self, sender):
-        searcher = widgets.Searcher(sender)
-        searcher.show()
+        self.search_widget = widgets.Searcher(sender)
+        self.search_widget.show()
 
     def search_string_recieved(self, sender, search_string, entry):
-        print self.db.search(search_string)
+        results = self.db.search(search_string)
+        sender.emit('jecta_search_results_generated', results)
+
+    # WIP on results display
+    def search_results_generated(self, sender, results):
+        print results
