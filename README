@@ -1,0 +1,72 @@
+Functional Specification - Jecta
+================================
+
+Introduction
+------------
+
+The idea of this document is to outline the basics of Jecta so that there is a
+plan to follow instead of meandering and aimless development.
+
+The points in the milestones are the goals needed to be achieved before that
+milestone is considered complete. As the milestones are reached the git
+repository will be tagged - 'M.1' etc.
+
+General idea
+------------
+
+Jecta is a project (proJECTA) assistant. It is designed to allow the tagging of
+file system paths/objects, urls and text so that they can be easily retrieved.
+
+The above types are dropped onto a helper area which then prompts the user for a
+tag for that data. New tags can be created, old tags selected (via autocomplete)
+and multiple (space/comma-seperated) tags can be attached to a single dropped
+item.
+
+Seperate to the tagging process is the searching process. A user can enter one
+or more space/comma-seperated tags (assisted by autocomplete) and an aggregate
+of types matching that tag will be listed. Links will be clickable and any
+dropped text will be summarised, clicking on a summary will bring up the full text.
+
+Milestone 1
+-----------
+ * Basic windows for drop, tag and search that function correctly
+ * Single tag tagging/search
+ * Results listings are not clickable
+
+Milestone 2
+-----------
+ * Autocomplete for tag creation/selection/search
+
+Milestone 3
+-----------
+ * Multiple-tag entry for tagging and searching
+
+Milestone 4
+-----------
+ * Results listings are clickable where it is a link - not for text
+
+Milestone 5
+-----------
+ * Text is clickable in results listings - brings up default editor with contents
+
+Milestone 6
+-----------
+ * When dropping a path, the path is traversed to tag all sub-files
+
+Milestone 7
+-----------
+ * Search searches contents of dropped data, weights it and inserts it in aggregate
+   with the tag-match results
+
+Milestone 8
+-----------
+ * Database is exportable to xml
+
+Milestone 9
+-----------
+ * Skinning of app for visual appeal
+
+Release 1
+---------
+ * Windows compatability?
+ * Deployment automation
