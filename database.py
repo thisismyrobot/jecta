@@ -1,12 +1,23 @@
 import pickle
+import signals
 
 
-class Database(object):
+class Database(signals.Receiver):
 
     mapping = {}
 
-    def __init__(self):
+    def __init__(self, *args, **kw):
+        super(Database, self).__init__(*args, **kw)
+        self.sender.connect('jecta_add_to_db', self.add_to_db)
+        self.sender.connect('jecta_search_db', self.search_db)
         self.load()
+
+    def add_to_db(self, sender, tag, data):
+        self.add(tag, data)
+
+    def search_db(self, sender, query):
+        results = self.search(query)
+        sender.emit('jecta_search_results_received', results)
 
     def add(self, tag, data):
         if tag in self.mapping:

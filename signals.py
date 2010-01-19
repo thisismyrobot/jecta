@@ -1,7 +1,4 @@
-import gtk
 import gobject
-import widgets
-import database
 
 
 class Sender(gobject.GObject):
@@ -9,44 +6,37 @@ class Sender(gobject.GObject):
         self.__gobject_init__()
 
 
-class Handler(gobject.GObject):
-    """ This handles all custom application signals, acting as the "controller"
-        for this application. It stores a instance of the database and the data
-        for the last tag.
+class Receiver(gobject.GObject):
+    """ Generic receiver of signals - provides specialisers with 'self.sender'.
     """
     def __init__(self, sender):
         self.__gobject_init__()
-        sender.connect('jecta_data_received', self.data_received)
-        sender.connect('jecta_tag_received', self.tag_received)
-        sender.connect('jecta_load_db', self.load_db)
-        sender.connect('jecta_add_to_db', self.add_to_db)
-        sender.connect('jecta_search_request_received', self.search_request_received)
-        sender.connect('jecta_search_string_received', self.search_string_recieved)
-        sender.connect('jecta_search_results_generated', self.search_results_generated)
+        self.sender = sender
+
+
+class Controller(Receiver):
+    """ This maps/translates signals between views and model - acting as the
+        'controller'.
+    """
+    def __init__(self, *args, **kw):
+        super(Controller, self).__init__(*args, **kw)
+        self.sender.connect('jecta_data_received', self.data_received)
+        self.sender.connect('jecta_tag_and_data_received', self.tag_and_data_received)
+        self.sender.connect('jecta_dropper_clicked', self.dropper_clicked)
+        self.sender.connect('jecta_search_string_updated', self.search_string_updated)
+        self.sender.connect('jecta_search_results_received', self.search_results_received)
 
     def data_received(self, sender, data):
-        self.data = data
-        tagger = widgets.Tagger(sender)
-        tagger.show()
+        self.sender.emit('jecta_get_tag_for_data', data)
 
-    def tag_received(self, sender, tag):
-        sender.emit('jecta_add_to_db', tag, self.data)
-        self.data = None
+    def tag_and_data_received(self, sender, tag, data):
+        self.sender.emit('jecta_add_to_db', tag, data)
 
-    def add_to_db(self, sender, tag, data):
-        self.db.add(tag, data)
+    def dropper_clicked(self, sender):
+        self.sender.emit('jecta_get_search_tag')
 
-    def load_db(self, sender):
-        self.db = database.Database()
+    def search_string_updated(self, sender, search_string):
+        self.sender.emit('jecta_search_db', search_string)
 
-    def search_request_received(self, sender):
-        self.search_widget = widgets.Searcher(sender)
-        self.search_widget.show()
-
-    def search_string_recieved(self, sender, search_string, entry):
-        results = self.db.search(search_string)
-        sender.emit('jecta_search_results_generated', results)
-
-    # WIP on results display
-    def search_results_generated(self, sender, results):
+    def search_results_received(self, sender, results):
         print results

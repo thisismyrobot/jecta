@@ -1,14 +1,15 @@
 import gtk
+import signals
 
 
-class Widget(object):
+class Widget(signals.Receiver):
     """ This is a window(widget) in the application - basic application-wide 
         settings are set here.
     """
-    def __init__(self, sender):
+    def __init__(self, *args, **kw):
+        super(Widget, self).__init__(*args, **kw)
         self.window = gtk.Window()
         self.window.connect("destroy", self.close)
-        self.sender = sender
         self.create_window()
         self.window.set_keep_above(True)
 
@@ -27,6 +28,14 @@ class Tagger(Widget):
 
     tag_prompt = 'Type in a tag'
 
+    def __init__(self, *args, **kw):
+        super(Tagger, self).__init__(*args, **kw)
+        self.sender.connect('jecta_get_tag_for_data', self.get_tag_for_data)
+
+    def get_tag_for_data(self, sender, data):
+        self.data = data
+        self.show()
+
     def create_window(self):
         self.window.set_size_request(300, 30)
         self.window.set_title(self.tag_prompt)
@@ -39,13 +48,20 @@ class Tagger(Widget):
     def tag_submitted(self, entry):
         tag = entry.get_text()
         if tag != self.tag_prompt and tag != '' and tag is not None:
-            self.sender.emit("jecta_tag_received", tag)
+            self.sender.emit("jecta_tag_and_data_received", tag, self.data)
         self.window.destroy()
 
 
 class Searcher(Widget):
 
     search_prompt = 'Find by tag'
+
+    def __init__(self, *args, **kw):
+        super(Searcher, self).__init__(*args, **kw)
+        self.sender.connect('jecta_get_search_tag', self.get_search_tag)
+
+    def get_search_tag(self, sender):
+        self.show()
 
     def create_window(self):
         self.window.set_size_request(300, 30)
@@ -59,7 +75,7 @@ class Searcher(Widget):
     def search(self, entry):
         search_string = entry.get_text()
         if search_string != self.search_prompt and search_string != '' and search_string is not None:
-            self.sender.emit("jecta_search_string_received", search_string, entry)
+            self.sender.emit("jecta_search_string_updated", search_string)
 
 
 class Dropper(Widget):
@@ -97,4 +113,4 @@ class Dropper(Widget):
 
     def clicked(self, window, event):
         if event.button == 1:
-            self.sender.emit("jecta_search_request_received")
+            self.sender.emit("jecta_dropper_clicked")
