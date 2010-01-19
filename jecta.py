@@ -2,6 +2,7 @@ import gtk
 import signals
 import widgets
 import gobject
+import database
 
 
 class Jecta(object):
@@ -16,47 +17,58 @@ class Jecta(object):
                            gobject.SIGNAL_RUN_FIRST,
                            gobject.TYPE_NONE,
                            (gobject.TYPE_STRING,))
-        gobject.signal_new("jecta_tag_received",
+        gobject.signal_new("jecta_tag_and_data_received",
+                           signals.Sender,
+                           gobject.SIGNAL_RUN_FIRST,
+                           gobject.TYPE_NONE,
+                           (gobject.TYPE_STRING, gobject.TYPE_STRING))
+        gobject.signal_new("jecta_get_tag_for_data",
                            signals.Sender,
                            gobject.SIGNAL_RUN_FIRST,
                            gobject.TYPE_NONE,
                            (gobject.TYPE_STRING,))
-        gobject.signal_new("jecta_load_db",
-                           signals.Sender,
-                           gobject.SIGNAL_RUN_FIRST,
-                           gobject.TYPE_NONE,
-                           ())
         gobject.signal_new("jecta_add_to_db",
                            signals.Sender,
                            gobject.SIGNAL_RUN_FIRST,
                            gobject.TYPE_NONE,
                            (gobject.TYPE_STRING, gobject.TYPE_STRING))
-        gobject.signal_new("jecta_search_request_received",
+        gobject.signal_new("jecta_dropper_clicked",
                            signals.Sender,
                            gobject.SIGNAL_RUN_FIRST,
                            gobject.TYPE_NONE,
                            ())
-        gobject.signal_new("jecta_search_string_received",
+        gobject.signal_new("jecta_get_search_tag",
                            signals.Sender,
                            gobject.SIGNAL_RUN_FIRST,
                            gobject.TYPE_NONE,
-                           (gobject.TYPE_STRING, gtk.Entry))
-        gobject.signal_new("jecta_search_results_generated",
+                           ())
+        gobject.signal_new("jecta_search_string_updated",
+                           signals.Sender,
+                           gobject.SIGNAL_RUN_FIRST,
+                           gobject.TYPE_NONE,
+                           (gobject.TYPE_STRING,))
+        gobject.signal_new("jecta_search_db",
+                           signals.Sender,
+                           gobject.SIGNAL_RUN_FIRST,
+                           gobject.TYPE_NONE,
+                           (gobject.TYPE_STRING,))
+        gobject.signal_new("jecta_search_results_received",
                            signals.Sender,
                            gobject.SIGNAL_RUN_FIRST,
                            gobject.TYPE_NONE,
                            (gobject.TYPE_STRING,))
 
-        #connect signals to handler
+        #create the signal sender
         sender = signals.Sender()
-        signals.Handler(sender)
 
-        #load the db
-        sender.emit("jecta_load_db")
+        #create the controller
+        signals.Controller(sender)
 
-        #create windows, provide signal sender in case needed
+        #create windows, provide signal sender
         drop_target = widgets.Dropper(sender)
-        tagger = widgets.Tagger(sender)
+        widgets.Tagger(sender)
+        widgets.Searcher(sender)
+        database.Database(sender)
 
         #show drop target
         drop_target.show()
