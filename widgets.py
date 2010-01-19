@@ -54,14 +54,6 @@ class Searcher(Widget):
         search_entry = gtk.Entry()
         search_entry.set_text(self.search_prompt)
         search_entry.connect("changed", self.search)
-        completion = gtk.EntryCompletion()
-        self.liststore = gtk.ListStore(str)
-        for s in ['apple', 'banana', 'cap', 'comb', 'color',
-                  'dog', 'doghouse']:
-            self.liststore.append([s])
-        completion.set_model(self.liststore)
-        completion.set_text_column(0)
-        search_entry.set_completion(completion)
         self.window.add(search_entry)
 
     def search(self, entry):
