@@ -59,25 +59,24 @@ class Searcher(Widget):
     def __init__(self, *args, **kw):
         super(Searcher, self).__init__(*args, **kw)
         self.sender.connect('jecta_get_search_tag', self.get_search_tag)
+        self.sender.connect('jecta_display_search_results', self.display_search_results)
 
     def get_search_tag(self, sender):
         self.show()
 
-    def create_model(self):
-        store = gtk.ListStore(str)
-        for row in ['a','b','c','d']:
-            store.append([row])
-        return store
-
     def create_columns(self, treeView):
         rendererText = gtk.CellRendererText()
-        column = gtk.TreeViewColumn("Results", rendererText, text=0)
+        column = gtk.TreeViewColumn("Tag", rendererText, text=0)
         column.set_sort_column_id(0)
         treeView.append_column(column)
 
+        rendererText = gtk.CellRendererText()
+        column = gtk.TreeViewColumn("Results", rendererText, text=1)
+        column.set_sort_column_id(1)
+        treeView.append_column(column)
 
     def create_window(self):
-        self.window.set_size_request(300, 300)
+        self.window.set_size_request(600, 300)
         self.window.set_title(self.search_prompt)
         self.window.set_position(gtk.WIN_POS_CENTER)
 
@@ -85,14 +84,14 @@ class Searcher(Widget):
         search_entry.set_text(self.search_prompt)
         search_entry.connect("changed", self.search)
 
-        store = self.create_model()
-        results_listing = gtk.TreeView(store)
-        self.create_columns(results_listing)
+        self.store = gtk.ListStore(str, str)
+        self.results_listing = gtk.TreeView(self.store)
+        self.create_columns(self.results_listing)
 
         results_scroller = gtk.ScrolledWindow()
         results_scroller.set_shadow_type(gtk.SHADOW_ETCHED_IN)
         results_scroller.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        results_scroller.add(results_listing)
+        results_scroller.add(self.results_listing)
 
         layout = gtk.Table(2, 1, False)
         layout.attach(search_entry, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
@@ -100,9 +99,17 @@ class Searcher(Widget):
 
         self.window.add(layout)
 
+    def display_search_results(self, sender, results):
+        self.store.clear()
+        for tag, content in results:
+            content, tail = content.lstrip().split("\n",1)
+            if len(tail) > 2:
+                content = "%s %s" % (content, "...")
+            self.store.append([tag, content])
+
     def search(self, entry):
         search_string = entry.get_text()
-        if search_string != self.search_prompt and search_string != '' and search_string is not None:
+        if search_string != self.search_prompt and search_string is not None:
             self.sender.emit("jecta_search_string_updated", search_string)
 
 

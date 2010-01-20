@@ -52,11 +52,16 @@ class Jecta(object):
                            gobject.SIGNAL_RUN_FIRST,
                            gobject.TYPE_NONE,
                            (gobject.TYPE_STRING,))
-        gobject.signal_new("jecta_search_results_received",
+        gobject.signal_new("jecta_search_results_ready",
                            signals.Sender,
                            gobject.SIGNAL_RUN_FIRST,
                            gobject.TYPE_NONE,
-                           (gobject.TYPE_STRING,))
+                           (gobject.TYPE_PYOBJECT,))
+        gobject.signal_new("jecta_display_search_results",
+                           signals.Sender,
+                           gobject.SIGNAL_RUN_FIRST,
+                           gobject.TYPE_NONE,
+                           (gobject.TYPE_PYOBJECT,))
 
         #create the signal sender
         sender = signals.Sender()

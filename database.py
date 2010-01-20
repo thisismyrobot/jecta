@@ -17,7 +17,7 @@ class Database(signals.Receiver):
 
     def search_db(self, sender, query):
         results = self.search(query)
-        sender.emit('jecta_search_results_received', results)
+        sender.emit('jecta_search_results_ready', results)
 
     def add(self, tag, data):
         if tag in self.mapping:
@@ -40,5 +40,6 @@ class Database(signals.Receiver):
         results = []
         for tag,data in self.mapping.items():
             if tag.startswith(query):
-                results.extend(data)
+                for item in data:
+                    results.append((tag, item))
         return results

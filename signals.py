@@ -24,7 +24,7 @@ class Controller(Receiver):
         self.sender.connect('jecta_tag_and_data_received', self.tag_and_data_received)
         self.sender.connect('jecta_dropper_clicked', self.dropper_clicked)
         self.sender.connect('jecta_search_string_updated', self.search_string_updated)
-        self.sender.connect('jecta_search_results_received', self.search_results_received)
+        self.sender.connect('jecta_search_results_ready', self.search_results_ready)
 
     def data_received(self, sender, data):
         self.sender.emit('jecta_get_tag_for_data', data)
@@ -38,5 +38,5 @@ class Controller(Receiver):
     def search_string_updated(self, sender, search_string):
         self.sender.emit('jecta_search_db', search_string)
 
-    def search_results_received(self, sender, results):
-        print results
+    def search_results_ready(self, sender, results):
+        self.sender.emit('jecta_display_search_results', results)
