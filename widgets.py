@@ -10,10 +10,10 @@ class Widget(signals.Receiver):
         super(Widget, self).__init__(*args, **kw)
         self.window = gtk.Window()
         self.window.connect("destroy", self.close)
-        self.create_window()
         self.window.set_keep_above(True)
 
     def show(self):
+        self.create_window()
         self.window.show_all()
 
     def create_window(self):
@@ -63,14 +63,43 @@ class Searcher(Widget):
     def get_search_tag(self, sender):
         self.show()
 
+    def create_model(self):
+        store = gtk.ListStore(str)
+        for row in ['a','b','c','d']:
+            store.append([row])
+        return store
+
+    def create_columns(self, treeView):
+        rendererText = gtk.CellRendererText()
+        column = gtk.TreeViewColumn("Results", rendererText, text=0)
+        column.set_sort_column_id(0)
+        treeView.append_column(column)
+
+
     def create_window(self):
-        self.window.set_size_request(300, 30)
+        self.window.set_size_request(300, 400)
         self.window.set_title(self.search_prompt)
         self.window.set_position(gtk.WIN_POS_CENTER)
+
         search_entry = gtk.Entry()
         search_entry.set_text(self.search_prompt)
         search_entry.connect("changed", self.search)
-        self.window.add(search_entry)
+
+        store = self.create_model()
+        results_listing = gtk.TreeView(store)
+        self.create_columns(results_listing)
+
+        valign_search = gtk.Alignment(1, 0, 1, 0)
+        valign_search.add(search_entry)
+
+        valign_results = gtk.Alignment(1, 0, 1, 0)
+        valign_results.add(results_listing)
+
+        container = gtk.VBox(False, 0)
+        container.pack_start(valign_search, False, False, 3)
+        container.pack_start(valign_results, False, False, 3)
+
+        self.window.add(container)
 
     def search(self, entry):
         search_string = entry.get_text()
