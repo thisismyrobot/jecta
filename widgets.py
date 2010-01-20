@@ -77,7 +77,7 @@ class Searcher(Widget):
 
 
     def create_window(self):
-        self.window.set_size_request(300, 400)
+        self.window.set_size_request(300, 300)
         self.window.set_title(self.search_prompt)
         self.window.set_position(gtk.WIN_POS_CENTER)
 
@@ -89,17 +89,16 @@ class Searcher(Widget):
         results_listing = gtk.TreeView(store)
         self.create_columns(results_listing)
 
-        valign_search = gtk.Alignment(1, 0, 1, 0)
-        valign_search.add(search_entry)
+        results_scroller = gtk.ScrolledWindow()
+        results_scroller.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        results_scroller.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        results_scroller.add(results_listing)
 
-        valign_results = gtk.Alignment(1, 0, 1, 0)
-        valign_results.add(results_listing)
+        layout = gtk.Table(2, 1, False)
+        layout.attach(search_entry, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=gtk.FILL)
+        layout.attach(results_scroller, 0, 1, 1, 2)
 
-        container = gtk.VBox(False, 0)
-        container.pack_start(valign_search, False, False, 3)
-        container.pack_start(valign_results, False, False, 3)
-
-        self.window.add(container)
+        self.window.add(layout)
 
     def search(self, entry):
         search_string = entry.get_text()
